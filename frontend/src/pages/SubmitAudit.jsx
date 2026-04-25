@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import api from '../api'
 import AuditResult from '../components/AuditResult'
 
-export default function SubmitAudit() {
+export default function SubmitAudit({ wallet }) {
   const [mode, setMode]       = useState('address')
   const [address, setAddress] = useState('')
   const [file, setFile]       = useState(null)
@@ -39,6 +39,16 @@ export default function SubmitAudit() {
         Analyze a smart contract and store the result on-chain.
       </p>
 
+      {!wallet && (
+        <div style={{
+          padding: 16, marginBottom: 24, borderRadius: 8,
+          background: '#1e293b', border: '1px solid #334155',
+          color: '#94a3b8', textAlign: 'center',
+        }}>
+          🔒 Please <strong style={{ color: '#38bdf8' }}>Connect Wallet</strong> to submit an audit.
+        </div>
+      )}
+
       <div style={{ display: 'flex', gap: 8, marginBottom: 20 }}>
         {['address', 'upload'].map(m => (
           <button key={m} onClick={() => setMode(m)} style={{
@@ -74,12 +84,14 @@ export default function SubmitAudit() {
           </div>
         )}
 
-        <button type="submit" disabled={loading} style={{
+        <button type="submit" disabled={loading || !wallet} style={{
           width: '100%', padding: '12px', borderRadius: 8, border: 'none',
-          background: loading ? '#334155' : '#1d4ed8', color: '#fff',
-          fontWeight: 600, fontSize: 16, cursor: loading ? 'not-allowed' : 'pointer',
+          background: !wallet ? '#1e293b' : loading ? '#334155' : '#1d4ed8',
+          color: !wallet ? '#475569' : '#fff',
+          fontWeight: 600, fontSize: 16,
+          cursor: (!wallet || loading) ? 'not-allowed' : 'pointer',
         }}>
-          {loading ? 'Analyzing… (this may take 1–2 minutes)' : 'Run Audit'}
+          {!wallet ? '🔒 Connect Wallet to Run Audit' : loading ? 'Analyzing… (this may take 1–2 minutes)' : 'Run Audit'}
         </button>
       </form>
 

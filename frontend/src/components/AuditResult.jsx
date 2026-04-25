@@ -63,7 +63,7 @@ function FindingCard({ f, index }) {
 export default function AuditResult({ data }) {
   if (!data) return null
   const navigate = useNavigate()
-  const { risk_score, summary, report_hash, tx_hash, findings_count, findings } = data
+  const { risk_score, summary, report_hash, tx_hash, findings_count, findings, is_proxy } = data
   const high   = (findings || []).filter(f => f.severity === 'HIGH').length
   const medium = (findings || []).filter(f => f.severity === 'MEDIUM').length
   const low    = (findings || []).filter(f => f.severity === 'LOW').length

@@ -7,3 +7,5 @@ web3==6.20.3
 requests==2.32.3
 tree-sitter==0.23.2
 tree-sitter-solidity==1.2.11
+faiss-cpu
+numpy

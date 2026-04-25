@@ -1,10 +1,10 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Routes, Route, NavLink } from 'react-router-dom'
+import { ethers } from 'ethers'
 import SubmitAudit from './pages/SubmitAudit'
 import ViewAudit from './pages/ViewAudit'
 import VerifyReport from './pages/VerifyReport'
 import ReportView from './pages/ReportView'
-import WalletConnect from './components/WalletConnect'
 
 const navStyle = ({ isActive }) => ({
   padding: '8px 16px',
@@ -14,7 +14,18 @@ const navStyle = ({ isActive }) => ({
   fontWeight: isActive ? 600 : 400,
 })
 
+const short = addr => addr ? `${addr.slice(0, 6)}...${addr.slice(-4)}` : ''
+
 export default function App() {
+  const [wallet, setWallet] = useState('')
+
+  const connectWallet = async () => {
+    if (!window.ethereum) return alert('Please install MetaMask')
+    const provider = new ethers.BrowserProvider(window.ethereum)
+    const accounts = await provider.send('eth_requestAccounts', [])
+    setWallet(accounts[0])
+  }
+
   return (
     <div style={{ minHeight: '100vh' }}>
       <nav style={{
@@ -29,12 +40,17 @@ export default function App() {
           <NavLink to="/view"   style={navStyle}>View Record</NavLink>
           <NavLink to="/verify" style={navStyle}>Verify Report</NavLink>
         </div>
-        <WalletConnect />
+        <button onClick={connectWallet} style={{
+          padding: '8px 16px', borderRadius: 8, border: 'none', cursor: 'pointer',
+          background: wallet ? '#166534' : '#1d4ed8', color: '#fff', fontWeight: 600,
+        }}>
+          {wallet ? short(wallet) : 'Connect Wallet'}
+        </button>
       </nav>
 
       <main style={{ maxWidth: 800, margin: '48px auto', padding: '0 24px' }}>
         <Routes>
-          <Route path="/"            element={<SubmitAudit />} />
+          <Route path="/"            element={<SubmitAudit wallet={wallet} />} />
           <Route path="/view"        element={<ViewAudit />} />
           <Route path="/verify"      element={<VerifyReport />} />
           <Route path="/report/:hash" element={<ReportView />} />

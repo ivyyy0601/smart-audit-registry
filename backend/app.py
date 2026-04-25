@@ -49,6 +49,7 @@ class AuditResponse(BaseModel):
     tx_hash: str
     findings_count: int
     findings: list
+    is_proxy: bool = False
 
 
 # ── Core pipeline ─────────────────────────────────────────────────────────────
@@ -61,11 +62,14 @@ def _run_audit_pipeline(source_code: str, identifier: str) -> AuditResponse:
     if "error" in result:
         raise HTTPException(status_code=422, detail=result["error"])
 
-    # 2. Generate risk score, summary, and full report
+    # 2. Generate report — use Scorer Agent's context-adjusted score
+    is_proxy = result.get("is_proxy", False)
     report_data = generate_report(
         findings=result["findings"],
         contract_identifier=identifier,
         functions_analyzed=result["functions_analyzed"],
+        ai_score=result.get("risk_score"),
+        is_proxy=is_proxy,
     )
 
     # 3. Upload full report to IPFS
@@ -100,6 +104,7 @@ def _run_audit_pipeline(source_code: str, identifier: str) -> AuditResponse:
         tx_hash=tx_hash,
         findings_count=len(result["findings"]),
         findings=result["findings"],
+        is_proxy=result.get("is_proxy", False),
     )
 
 
