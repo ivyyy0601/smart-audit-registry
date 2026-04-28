@@ -21,6 +21,11 @@ export default function App() {
 
   const connectWallet = async () => {
     if (!window.ethereum) return alert('Please install MetaMask')
+    // Force MetaMask popup every time
+    await window.ethereum.request({
+      method: 'wallet_requestPermissions',
+      params: [{ eth_accounts: {} }],
+    })
     const provider = new ethers.BrowserProvider(window.ethereum)
     const accounts = await provider.send('eth_requestAccounts', [])
     setWallet(accounts[0])

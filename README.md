@@ -4,6 +4,8 @@ An AI-powered smart contract security auditing platform built on Sepolia testnet
 Submit any Solidity contract — the system runs a multi-agent AI analysis, generates a risk score,
 stores the full report on IPFS, and writes an immutable audit record to the blockchain.
 
+<img src="docs/multiagent_diagram.jpg" width="800" />
+
 ---
 
 ## How It Works
